@@ -1,3 +1,12 @@
+import /init.recovery.qcom_decrypt.rc
+
+on init
+    wait /dev/block/platform/${ro.boot.bootdevice}
+    symlink /dev/block/platform/${ro.boot.bootdevice} /dev/block/bootdevice
+
+on fs
+    export LD_PRELOAD /sbin/liblog_htc_sbin.so
+
 on boot
     write /sys/module/rpm_resources/enable_low_power/L2_cache 1
     write /sys/module/rpm_resources/enable_low_power/pxo 1
@@ -19,10 +28,11 @@ on boot
     setprop usb.product.adb 0c02
     setprop usb.product.mtpadb 0f87
     setprop recovery.perf.mode 0
+    start choice_fn
     start chargeled
 
-on charger
-    start choice_fn
+on property:ro.bootmode=offmode_charging
+    stop recovery
     start detect_key
     start offmode_charging
 

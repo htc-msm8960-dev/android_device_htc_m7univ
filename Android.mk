@@ -13,11 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ifeq ($(RECOVERY_VARIANT), twrp)
-ifeq ($(TARGET_DEVICE), m7univ)
-
 LOCAL_PATH := $(call my-dir)
-include $(call first-makefiles-under, $(LOCAL_PATH))
 
-endif
+ifneq ($(filter m7univ,$(TARGET_DEVICE)),)
+include $(call all-makefiles-under,$(LOCAL_PATH))
 endif

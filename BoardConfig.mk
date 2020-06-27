@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-USE_CAMERA_STUB := true
+BOARD_VENDOR := htc
 
 # inherit from the proprietary version
 -include vendor/htc/m7univ/BoardConfigVendor.mk
@@ -41,8 +41,7 @@ BOARD_KERNEL_BASE := 0x80600000
 BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.hardware=qcom user_debug=31 androidboot.selinux=permissive
 BOARD_KERNEL_PAGESIZE := 2048
 BOARD_MKBOOTIMG_ARGS := --ramdisk_offset 0x01800000
-TARGET_KERNEL_CONFIG := m7_defconfig
-TARGET_KERNEL_SOURCE := kernel/htc/msm8960
+TARGET_PREBUILT_KERNEL := device/$(BOARD_VENDOR)/$(TARGET_DEVICE)/prebuilt/zImage
 
 # QCOM hardware
 BOARD_USES_QCOM_HARDWARE := true
@@ -64,14 +63,22 @@ TARGET_POWERHAL_VARIANT := qcom
 
 # Filesystem
 TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_USERIMAGES_USE_F2FS := true
 BOARD_BOOTIMAGE_PARTITION_SIZE := 16777216
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 16776704
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 1946156032
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 27917287424
 BOARD_FLASH_BLOCK_SIZE := 131072
 
+# Android version & Security Patch Level
+# Default TWRP Values
+PLATFORM_VERSION := 20.1.0
+PLATFORM_SECURITY_PATCH := 2099-12-31
+
 # Recovery
 BOARD_HAS_NO_SELECT_BUTTON := true
+BOARD_NEEDS_LZMA_MINIGZIP := true
+LZMA_RAMDISK_TARGETS := recovery
 
 # Vold
 BOARD_VOLD_MAX_PARTITIONS := 38
@@ -79,19 +86,8 @@ BOARD_VOLD_MAX_PARTITIONS := 38
 # Charge mode
 BOARD_CHARGING_MODE_BOOTING_LPM := /sys/htc_lpm/lpm_mode
 
-# SELinux
--include device/qcom/sepolicy/sepolicy.mk
-
-BOARD_SEPOLICY_DIRS += device/htc/m7univ/sepolicy
-
-BOARD_SEPOLICY_UNION += \
-    akmd.te \
-    cir_fw_update.te
-
 # Vendor Init
-TARGET_UNIFIED_DEVICE := true
-TARGET_INIT_VENDOR_LIB := libinit_m7univ
-TARGET_LIBINIT_DEFINES_FILE := device/htc/m7univ/init/init_m7univ.c
+TARGET_INIT_VENDOR_LIB := libinit_$(TARGET_DEVICE)
 
 # TWRP
 TW_THEME := portrait_hdpi
@@ -99,11 +95,13 @@ TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 RECOVERY_GRAPHICS_USE_LINELENGTH := true
 TW_BRIGHTNESS_PATH := "/sys/class/leds/lcd-backlight/brightness"
 TW_INCLUDE_CRYPTO := true
+TW_OVERRIDE_SYSTEM_PROPS := "ro.build.fingerprint"
 BOARD_RECOVERY_BLDRMSG_OFFSET := 2048
 RECOVERY_VARIANT := twrp
-TARGET_RECOVERY_DEVICE_MODULES := chargeled libinit_m7univ
+TARGET_RECOVERY_DEVICE_MODULES := chargeled liblog_htc_sbin
 RECOVERY_SDCARD_ON_DATA := true
 BOARD_HAS_NO_REAL_SDCARD := true
+#TW_USE_TOOLBOX := true
 TW_NO_USB_STORAGE := true
 TW_EXTERNAL_STORAGE_PATH := "/usb-otg"
 TW_EXTERNAL_STORAGE_MOUNT_POINT := "usb-otg"
